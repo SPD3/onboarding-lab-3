@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <bit>
 #include <catch2/catch_test_macros.hpp>
+#include <cstdint>
 
 #include <VExercise2.h>
 
@@ -46,9 +47,7 @@ TEST_CASE("Exercise 2 Test Reset") {
   
 }
 
-TEST_CASE("Exercise 2 ") {
-  uint16_t init = 0;
-
+void test_exercise_2_100_iters(uint16_t init) {
   VExercise2 model;
   model.reset = 1;
   model.init = init;
@@ -65,4 +64,20 @@ TEST_CASE("Exercise 2 ") {
   model.reset = 1;
   step(model);
   REQUIRE(model.out == (uint16_t) ~init);
+}
+
+TEST_CASE("Exercise 2 Set starting values") {
+
+  test_exercise_2_100_iters(0);
+  test_exercise_2_100_iters((uint16_t) ~0);
+
+  test_exercise_2_100_iters(100);
+  test_exercise_2_100_iters(3456);
+}
+
+TEST_CASE("Exercise 2 Random starting values") {
+  for (size_t i = 0; i < 10; ++i) {
+    uint16_t random = rand() % (uint16_t) ~0;
+    test_exercise_2_100_iters(random);
+  }
 }
