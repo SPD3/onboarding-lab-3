@@ -16,7 +16,6 @@ void test_all_inputs(uint8_t code, uint8_t(op)(uint8_t, uint8_t)) {
       model.eval();
       uint8_t result {op(model.a, model.b)};
       if (result != model.out) {
-      //if (code == 1) {
         cout << "a: " << unsigned(model.a) << endl;
         cout << "b: " << unsigned(model.b) << endl;
         cout << "result: " << unsigned(result) << endl;
