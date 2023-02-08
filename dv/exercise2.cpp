@@ -77,7 +77,7 @@ TEST_CASE("Exercise 2 Set starting values") {
 
 TEST_CASE("Exercise 2 Random starting values") {
   for (size_t i = 0; i < 10; ++i) {
-    uint16_t random = rand() % (uint16_t) ~0;
+    uint16_t random = rand() % ((uint16_t) ~0 + 1);
     test_exercise_2_100_iters(random);
   }
 }
