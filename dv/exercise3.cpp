@@ -1,4 +1,4 @@
-#include <cstdint>
+
 #include <bit>
 #include <catch2/catch_test_macros.hpp>
 #include <cstdint>
@@ -25,7 +25,7 @@ private:
     if (a == 0) {
       return ((b & 0b111) << 3) | (c & 0b111);
     }else if(a == 1) { 
-      return ((b & 0b111) << 3) | (c & 0b111) | 0b1000000;
+      return ((c & 0b111) << 3) | (b & 0b111) | 0b1000000;
     }else if(a == 2) {
       return b;
     }
@@ -34,16 +34,16 @@ private:
 
   uint8_t get_Mystery2_a_in() {
     int top_a_in = a & 0b11;
-    int top_b_in = b & 11111111;
-    int top_c_in = c & 11111111;
-
+    
+    uint8_t top_b_in = b & 0b11111111;
+    uint8_t top_c_in = c & 0b11111111;
     return mystery1Simul(top_a_in, top_b_in, top_c_in);
   }
 
   uint8_t get_Mystery2_b_in() {
     int bot_a_in = (a & 0b1100) >> 2;
-    int bot_b_in = b >> 8;
-    int bot_c_in = c >> 8;
+    uint8_t bot_b_in = b >> 8;
+    uint8_t bot_c_in = c >> 8;
 
     return mystery1Simul(bot_a_in, bot_b_in, bot_c_in);
   }
@@ -87,14 +87,6 @@ void testModel(VExercise3& model) {
   for(size_t i = 0; i < 10; ++i) {
     step(model);
     ex3Simulation.step();
-    if (ex3Simulation.out != model.out) {
-      cout << "a: " << unsigned(model.a) << endl;
-      cout << "b: " << unsigned(model.b) << endl;
-      cout << "c: " << unsigned(model.b) << endl;
-      cout << "ex3Simulation.out: " << unsigned(ex3Simulation.out) << endl;
-      cout << "out: " << unsigned(model.out) << endl;
-      cout << "---------------------------------" << endl;
-    }
     REQUIRE(model.out == ex3Simulation.out);
   }
 }
@@ -105,14 +97,34 @@ TEST_CASE("Exercise 3 Mystery1") {
   model.b = 0;
   model.c = 0;
 
-  for(size_t i = 0; i < 4; ++i) {
+  for(size_t i = 0; i < 16; ++i) {
     model.a = i;
-    for (size_t i = 0; i < 10; ++i) {
-      model.b = rand() % (uint16_t) ~0;
-      for (size_t i = 0; i < 10; ++i) { 
-        model.c = rand() % (uint16_t) ~0;
+    for (size_t j = 0; j < 10; ++j) {
+      model.b = rand() % ((uint16_t) ~0 + 1);
+      for (size_t k = 0; k < 10; ++k) { 
+        model.c = rand() % ((uint16_t) ~0 + 1);
         testModel(model);
+        
       }
     }
   } 
+}
+
+TEST_CASE("Exercise 3 Test reseting") {
+  VExercise3 model;
+  model.reset = 1;
+  model.a = 0;
+  model.b = 0;
+  model.c = 0;
+
+  step(model);
+  uint16_t result = 0;
+  REQUIRE(model.out == result);
+
+  step(model);
+  step(model);
+  step(model);
+  step(model);
+  REQUIRE(model.out == result);
+
 }
